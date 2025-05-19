@@ -1,29 +1,33 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz: Atmungssystem</title>
+  <title>Quiz: Aterien und Venen</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #e0f7fa;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .container {
-      width: 95%;
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 90vh;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e0f7fa;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  min-height: 100vh;
+}
+
+.container {
+  width: 95%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
+  height: auto;          
+}
+
     h2 {
       color: #004d40;
       text-align: center;
@@ -80,12 +84,20 @@
       background-color: #00332b;
     }
     .ergebnis {
-      display: none;
-      text-align: center;
-      font-size: 22px;
-      color: #004d40;
-      margin-top: 20px;
-    }
+  display: none;
+  text-align: left;
+  font-size: 18px;
+  color: #004d40;
+  margin-top: 20px;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+.ergebnis ul {
+  padding-left: 20px;
+}
+.ergebnis li {
+  margin-bottom: 10px;
+}
     .level-auswahl {
       display: flex;
       flex-direction: column;
@@ -110,7 +122,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Quiz: Atmungssystem</h2>
+    <h2>Quiz: Arterien und Venen</h2>
     <div class="level-auswahl" id="level-auswahl">
       <button onclick="startQuiz('leicht')">Leicht</button>
       <button onclick="startQuiz('mittel')">Mittel</button>
@@ -125,8 +137,10 @@
     </div>
   </div>
   <script>
+    let wrongAnswers = [];
+
     const allQuestions = [
-        { question: "Welche Hauptaufgabe hat das Atemsystem?", answers: ["Produktion von Hormonen", "Regulierung der Körpertemperatur", "Gasaustausch von Sauerstoff und Kohlendioxid", "Verdauung von Nährstoffen"], correct: 2, level: "leicht" },
+    { question: "Welche Hauptaufgabe hat das Atemsystem?", answers: ["Produktion von Hormonen", "Regulierung der Körpertemperatur", "Gasaustausch von Sauerstoff und Kohlendioxid", "Verdauung von Nährstoffen"], correct: 2, level: "leicht" },
         { question: "Wo findet der eigentliche Gasaustausch in der Lunge statt?", answers: ["In den Bronchien", "In der Luftröhre", "In den Alveolen", "Im Kehlkopf"], correct: 2, level: "leicht" },
         { question: "Welches Organ trennt die Brusthöhle von der Bauchhöhle und spielt eine zentrale Rolle bei der Atmung?", answers: ["Lunge", "Zwerchfell", "Luftröhre", "Rippenmuskulatur"], correct: 1, level: "leicht" },
         { question: "Wie nennt man den Prozess der Einatmung?", answers: ["Exspiration", "Diffusion", "Inspiration", "Perfusion"], correct: 2, level: "leicht" },
@@ -186,7 +200,7 @@
         { question: "Was kann bei einer schweren Lungenembolie passieren?", answers: ["Hyperventilation", "Sauerstoffmangel im Gehirn und Herzstillstand", "Erhöhung der Herzfrequenz ohne weitere Folgen", "Verstärkte Sauerstoffaufnahme"], correct: 1, level: "mittel" },
         { question: "Wie verändert sich der Sauerstoffpartialdruck mit zunehmender Höhe?", answers: ["Er bleibt gleich", "Er nimmt ab", "Er steigt an", "Er verändert sich nicht, nur die Luftdichte nimmt ab"], correct: 1, level: "mittel" },
         { question: "Welche Substanz bindet sich bei einer Kohlenmonoxidvergiftung an Hämoglobin und verhindert den Sauerstofftransport?", answers: ["Kohlendioxid", "Kohlenmonoxid", "Stickstoff", "Ozon"], correct: 1, level: "mittel" },
-       { question: "Welche Struktur ist bei einer Lungenfibrose besonders betroffen?", answers: ["Bronchien", "Alveolen", "Teachea", "Pleura"], correct: 1, level: "schwer" },
+        { question: "Welche Struktur ist bei einer Lungenfibrose besonders betroffen?", answers: ["Bronchien", "Alveolen", "Teachea", "Pleura"], correct: 1, level: "schwer" },
         { question: "Welcher Teil des Gehirns ist primär für die Steuerung der Atmung verantwortlich?", answers: ["Hypothalamus", "Medulla oblongata", "Cerebellum", "Hippocampus"], correct: 1, level: "schwer" },
         { question: "Was beschreibt der Begriff „Hypoxische Vasokonstriktion?", answers: ["Verengung der Bronchien bei Sauerstoffmangel", "Engstellung der Lungengefäße bei Sauerstoffmangel", "Erweiterung der Alveolen zur Kompensation", "Erhöhung der Atemfrequenz zur CO₂-Abgabe"], correct: 1, level: "schwer" },
         { question: "Welche Atemanpassung tritt bei einem Patienten mit chronischer CO₂-Retention häufig auf?", answers: ["Die Atmung wird durch den O₂-Spiegel reguliert statt durch CO₂", " Die Atmung wird tiefer und schneller", "Es kommt zur Hyperventilation", " Der pH-Wert des Blutes steigt stark an"], correct: 0, level: "schwer" },
@@ -200,7 +214,7 @@
         { question: "Welche Erkrankung kann durch eine langfristige pulmonale Hypertonie entstehen?", answers: ["Cor pulmonale", "Bronchiektasen", "Lungenödem", "Pleuritis"], correct: 0, level: "schwer" },
         { question: "Warum kann eine schwere COPD zu einer Polyglobulie führen?", answers: ["Durch chronischen Sauerstoffmangel wird vermehrt Erythropoetin ausgeschüttet", "Die Bronchien produzieren vermehrt Schleim", "Das Lungenvolumen nimmt ab", "Der CO₂-Gehalt im Blut sinkt stark"], correct: 0, level: "schwer" },
         { question: "Welche der folgenden Aussagen zur Diffusionskapazität der Lunge ist korrekt?", answers: [" Sie ist erhöht bei Lungenfibrose", "Sie ist vermindert bei Emphysem", "Sie wird durch CO₂, nicht durch O₂, beeinflusst", "Sie hängt nicht von der alveolären Kapillarmembran ab"], correct: 1, level: "schwer" },
-        ];
+];
     let questions = [];
     let used = [];
     let correctCount = 0;
@@ -238,36 +252,56 @@
       q.answers.forEach((ans, i) => {
         const btn = document.createElement('button');
         btn.textContent = ans;
-        btn.onclick = () => {
-          if (i === q.correct) {
-            btn.classList.add('correct');
-            correctCount++;
-          } else {
-            btn.classList.add('wrong');
-            setTimeout(() => {
-              Array.from(container.children)[q.correct].classList.add('correct');
-            }, 100);
-          }
-          setTimeout(showNext, 500);
-        };
+btn.onclick = () => {
+  if (i === q.correct) {
+    btn.classList.add('correct');
+    correctCount++;
+  } else {
+    btn.classList.add('wrong');
+    wrongAnswers.push({
+      question: q.question,
+      selected: q.answers[i],
+      correct: q.answers[q.correct]
+    });
+
+    setTimeout(() => {
+      Array.from(container.children)[q.correct].classList.add('correct');
+    }, 100);
+  }
+  setTimeout(showNext, 1000);
+};
         container.appendChild(btn);
       });
     }
 
-    function showResult() {
-      document.getElementById('frage').style.display = 'none';
-      document.getElementById('antworten').style.display = 'none';
-      const percent = Math.round((correctCount / askedCount) * 100);
-      document.getElementById('ergebnis').textContent =
-        `Du hast ${correctCount} von ${askedCount} richtig (${percent}%)`;
-      document.getElementById('ergebnis').style.display = 'block';
-      document.getElementById('navigation').style.display = 'flex';
-    }
+function showResult() {
+  document.getElementById('frage').style.display = 'none';
+  document.getElementById('antworten').style.display = 'none';
+  const percent = Math.round((correctCount / askedCount) * 100);
+  const ergebnisDiv = document.getElementById('ergebnis');
+
+  let resultText = `Du hast ${correctCount} von ${askedCount} richtig (${percent}%)`;
+
+  if (wrongAnswers.length > 0) {
+    resultText += "<br><br><strong>Falsch beantwortete Fragen:</strong><ul>";
+    wrongAnswers.forEach(item => {
+      resultText += `<li><strong>Frage:</strong> ${item.question}<br>
+                     <strong>Deine Antwort:</strong> ${item.selected}<br>
+                     <strong>Richtige Antwort:</strong> ${item.correct}</li><br>`;
+    });
+    resultText += "</ul>";
+  }
+
+  ergebnisDiv.innerHTML = resultText;
+  ergebnisDiv.style.display = 'block';
+  document.getElementById('navigation').style.display = 'flex';
+}
 
     function restart() {
       used = [];
       correctCount = 0;
       askedCount = 0;
+      wrongAnswers = [];
       document.getElementById('ergebnis').style.display = 'none';
       document.getElementById('navigation').style.display = 'none';
       startQuiz(questions[0].level); // Restart with the same level
@@ -277,6 +311,7 @@
       used = [];
       correctCount = 0;
       askedCount = 0;
+      wrongAnswers = [];
       document.getElementById('frage').style.display = 'none';
       document.getElementById('antworten').style.display = 'none';
       document.getElementById('ergebnis').style.display = 'none';
