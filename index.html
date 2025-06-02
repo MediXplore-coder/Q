@@ -1,8 +1,8 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz: Aterien und Venen</title>
+  <title>Quiz: Atemsystem</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -118,11 +118,18 @@ body {
     .level-auswahl button:hover {
       background-color: #004d40;
     }
+    #fortschritt {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+  color: #004d40;
+  font-weight: bold;
+}
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Quiz: Arterien und Venen</h2>
+    <h2>Quiz: Atemsystem</h2>
     <div class="level-auswahl" id="level-auswahl">
       <button onclick="startQuiz('leicht')">Leicht</button>
       <button onclick="startQuiz('mittel')">Mittel</button>
@@ -130,6 +137,7 @@ body {
     </div>
     <div class="frage" id="frage" style="display: none;"></div>
     <div class="antworten" id="antworten" style="display: none;"></div>
+    <div id="fortschritt" style="margin-top: 10px; font-size: 16px; text-align: center; color: #004d40;"></div>
     <div class="ergebnis" id="ergebnis"></div>
     <div class="navigation" id="navigation">
       <button onclick="restart()">Wiederholen</button>
@@ -140,7 +148,7 @@ body {
     let wrongAnswers = [];
 
     const allQuestions = [
-    { question: "Welche Hauptaufgabe hat das Atemsystem?", answers: ["Produktion von Hormonen", "Regulierung der Körpertemperatur", "Gasaustausch von Sauerstoff und Kohlendioxid", "Verdauung von Nährstoffen"], correct: 2, level: "leicht" },
+{ question: "Welche Hauptaufgabe hat das Atemsystem?", answers: ["Produktion von Hormonen", "Regulierung der Körpertemperatur", "Gasaustausch von Sauerstoff und Kohlendioxid", "Verdauung von Nährstoffen"], correct: 2, level: "leicht" },
         { question: "Wo findet der eigentliche Gasaustausch in der Lunge statt?", answers: ["In den Bronchien", "In der Luftröhre", "In den Alveolen", "Im Kehlkopf"], correct: 2, level: "leicht" },
         { question: "Welches Organ trennt die Brusthöhle von der Bauchhöhle und spielt eine zentrale Rolle bei der Atmung?", answers: ["Lunge", "Zwerchfell", "Luftröhre", "Rippenmuskulatur"], correct: 1, level: "leicht" },
         { question: "Wie nennt man den Prozess der Einatmung?", answers: ["Exspiration", "Diffusion", "Inspiration", "Perfusion"], correct: 2, level: "leicht" },
@@ -332,8 +340,6 @@ body {
         { question: "Welche Blutgasanalysewerte sprechen für eine respiratorische Azidose?", answers: ["pH↑, pCO₂↓", "pH↓, pCO₂↑", "pH↓, HCO₃↑", "pH↑, HCO₃↓"], correct: 1, level: "schwer" },
         { question: "Welche Anpassung der Atmung tritt bei chronischer CO₂-Retention ein?", answers: ["Hypoxische Atemansteuerung", "Hyperventilation", "Respiratorische Alkalose", "Keine Veränderung"], correct: 0, level: "schwer" },
         { question: "Welche Ursache hat eine Tetanie bei Hyperventilation?", answers: ["Hypokalzämie durch pH-Anstieg", "Hyperkalzämie", "Niedriger Sauerstoffgehalt", "Hyperkapnie"], correct: 0, level: "schwer" },
-      
-
 ];
     let questions = [];
     let used = [];
@@ -342,6 +348,30 @@ body {
 
     function startQuiz(selectedLevel) {
       questions = allQuestions.filter(q => q.level === selectedLevel);
+
+const saved = localStorage.getItem(`quizProgress_${selectedLevel}`);
+if (saved) {
+  const resume = confirm(`Du hast ein Quiz für "${selectedLevel}" begonnen. Fortsetzen?`);
+  if (resume) {
+    const data = JSON.parse(saved);
+    used = data.used || [];
+    correctCount = data.correctCount || 0;
+    askedCount = data.askedCount || 0;
+    wrongAnswers = data.wrongAnswers || [];
+  } else {
+    localStorage.removeItem(`quizProgress_${selectedLevel}`);
+    used = [];
+    correctCount = 0;
+    askedCount = 0;
+    wrongAnswers = [];
+  }
+} else {
+  used = [];
+  correctCount = 0;
+  askedCount = 0;
+  wrongAnswers = [];
+}
+
       document.getElementById('level-auswahl').style.display = 'none';
       document.getElementById('frage').style.display = 'block';
       document.getElementById('antworten').style.display = 'flex';
@@ -364,6 +394,7 @@ body {
         return;
       }
       askedCount++;
+      document.getElementById('fortschritt').textContent = `Frage ${askedCount} / ${questions.length}`;
       const idx = getRandomIndex();
       const q = questions[idx];
       document.getElementById('frage').textContent = q.question;
@@ -388,7 +419,8 @@ btn.onclick = () => {
       Array.from(container.children)[q.correct].classList.add('correct');
     }, 100);
   }
-  setTimeout(showNext, 1000);
+  saveProgress(); //zum Speichern vom Quizfortschritt
+  setTimeout(showNext, 1000); 
 };
         container.appendChild(btn);
       });
@@ -417,7 +449,12 @@ function showResult() {
   document.getElementById('navigation').style.display = 'flex';
 }
 
+    
+
     function restart() {
+      localStorage.removeItem(`quizProgress_${questions[0]?.level}`);I
+
+      
       used = [];
       correctCount = 0;
       askedCount = 0;
@@ -428,6 +465,8 @@ function showResult() {
     }
 
     function Levels() {
+      localStorage.removeItem('quizProgress');
+
       used = [];
       correctCount = 0;
       askedCount = 0;
@@ -438,6 +477,41 @@ function showResult() {
       document.getElementById('navigation').style.display = 'none';
       document.getElementById('level-auswahl').style.display = 'flex';
     }
+    //Die Funktion zum Speichern vom Quizfortschritt
+      function saveProgress() {
+        const level = questions[0]?.level || '';
+        const progress = {
+          used,
+          correctCount,
+          askedCount,
+          wrongAnswers
+        };
+        localStorage.setItem(`quizProgress_${level}`, JSON.stringify(progress));
+      }
+
+    
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('quizProgress');
+  if (saved) {
+    const resume = confirm("Willst du dein Quiz fortsetzen?");
+    if (resume) {
+      const data = JSON.parse(saved);
+      questions = allQuestions.filter(q => q.level === data.level);
+      used = data.used || [];
+      correctCount = data.correctCount || 0;
+      askedCount = data.askedCount || 0;
+      wrongAnswers = data.wrongAnswers || [];
+      
+      document.getElementById('level-auswahl').style.display = 'none';
+      document.getElementById('frage').style.display = 'block';
+      document.getElementById('antworten').style.display = 'flex';
+      showNext();
+    } else {
+      localStorage.removeItem('quizProgress');
+    }
+  }
+});
+
   </script>
 </body>
 </html>
